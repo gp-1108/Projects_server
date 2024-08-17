@@ -17,9 +17,9 @@
     </style>
 </head>
 <body>
-    <header class="bg-primary text-white py-5">
+    <header class="bg-primary text-white py-3"> <!-- Made the top bar slimmer -->
         <div class="container">
-            <h1 class="display-4"><i class="fas fa-project-diagram me-3"></i>{{ project.title }}</h1>
+            <h1 class="display-5"><i class="fas fa-project-diagram me-3"></i>{{ project.title }}</h1> <!-- Reduced header size -->
             <p class="lead">{{ project.short_description }}</p>
         </div>
     </header>
@@ -41,12 +41,14 @@
                 <div id="image-preview" class="mt-3"></div>
                 <div id="processing-result" class="mt-3"></div>
 
-                <h3><i class="fas fa-images me-2"></i>Project Images</h3>
+                <h3><i class="fas fa-images me-2"></i>Demo Images</h3>
                 <div class="row" id="project-images-container">
                     {% for image in project.images %}
                         <div class="col-md-4 mb-3">
                             <div class="project-image-container" data-full-image="{{ url_for('static', filename='images/' + image) }}">
-                                <img src="{{ url_for('static', filename='images/' + image) }}" class="project-image" alt="Project Image {{ loop.index }}">
+                                <a href="{{ url_for('static', filename='images/' + image) }}" data-lightbox="project-gallery" data-title="Project Image {{ loop.index }}">
+                                    <img src="{{ url_for('static', filename='images/' + image) }}" class="project-image" alt="Project Image {{ loop.index }}">
+                                </a>
                             </div>
                         </div>
                     {% endfor %}
@@ -59,33 +61,31 @@
                         <h3 class="card-title"><i class="fas fa-clipboard-list me-2"></i>Project Details</h3>
                         <p><i class="far fa-calendar-alt me-2"></i><strong>Date Completed:</strong> {{ project.completion_date }}</p>
                         <p><i class="fab fa-github me-2"></i><strong>GitHub:</strong> <a href="{{ project.github_url }}" target="_blank">Repository</a></p>
+                        {% if project.paper %}
+                            <p><i class="fas fa-file-alt me-2"></i><strong>Research Paper:</strong> <a href="{{ project.paper }}" target="_blank">View Paper</a></p>
+                        {% endif %}
                     </div>
                 </div>
 
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h3 class="card-title"><i class="fas fa-share-alt me-2"></i>Share Project</h3>
-                        <div class="d-flex justify-content-around">
-                            <a href="#" class="btn btn-outline-primary btn-sm"><i class="fab fa-facebook-f"></i></a>
-                            <a href="#" class="btn btn-outline-info btn-sm"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="btn btn-outline-danger btn-sm"><i class="fab fa-pinterest-p"></i></a>
-                            <a href="#" class="btn btn-outline-secondary btn-sm"><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
-        <section class="my-5">
-            <h2><i class="fas fa-sticky-note me-2"></i>Additional Notes</h2>
-            <p>{{ project.additional_notes }}</p>
-        </section>
+        {% if project.additional_notes %}
+            <section class="my-5">
+                <h2><i class="fas fa-sticky-note me-2"></i>Additional Notes</h2>
+                <p>{{ project.additional_notes }}</p>
+            </section>
+        {% endif %}
 
     </main>
 
     <footer class="bg-light py-4">
         <div class="container text-center">
-            <p><i class="far fa-copyright me-2"></i>{{ current_year }} Your Name. All rights reserved.</p>
+            <p><i class="far fa-copyright me-2"></i>{{ current_year }} Pietro Girotto. All rights reserved.</p>
+            <div class="social-icons mt-2">
+                <a href="https://github.com/gp-1108" target="_blank" class="text-dark me-3"><i class="fab fa-github fa-lg"></i></a>
+                <a href="https://linkedin.com/in/pietro-girotto" target="_blank" class="text-dark"><i class="fab fa-linkedin fa-lg"></i></a>
+            </div>
         </div>
     </footer>
 
@@ -102,9 +102,6 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    // document.getElementById('image-preview').innerHTML = `<img src="${e.target.result}" class="img-fluid mb-3" alt="Uploaded Image">`;
-                    
-                    // Send the image to the API endpoint
                     fetch('/api/process-image', {
                         method: 'POST',
                         body: JSON.stringify({image: e.target.result}),

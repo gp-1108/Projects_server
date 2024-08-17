@@ -8,16 +8,16 @@ app = Flask(__name__)
 def project():
     # Fetch project data based on project_id
     project_data = {
-        "title": "Test tile",
-        "short_description": "Test short description",
-        "description": "Test description",
-        "technologies": ["Python", "Flask", "HTML", "CSS", "JavaScript"],
+        "title": "Player Segmentation",
+        "short_description": "Fine-tuning YOLOv8 for occluded players segmentation",
+        "description": "This model was trained specifically for segmenting people in images. The final performances greatly improved when dealing with occluded bodies, as the base model was struggling with it. Have a look at the paper for more insights.",
+        "technologies": ["Python", "Ultralytics", "Deep Learning"],
         "images": ["band_seg.jpg", "couple_seg.jpg"],
-        "completion_date": "2021-01-01",
+        "completion_date": "2023-08-10",
         "github_url": "https://github.com/gp-1108/CV_Sport_Project",
-        "additional_notes": "Test additional notes"
+        "paper": "https://github.com/gp-1108/CV_Sport_Project/blob/master/Report%20-%20Sport%20Scene%20Analysis.pdf"
     }
-    return render_template("project.html", project=project_data, current_year=datetime.now().year)
+    return render_template("player_seg.html", project=project_data, current_year=datetime.now().year)
 
 @app.route('/api/process-image', methods=['POST'])
 def process_image():
