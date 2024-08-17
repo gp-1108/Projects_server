@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project.title }} - My Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .project-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-primary text-white py-5">
+        <div class="container">
+            <h1 class="display-4"><i class="fas fa-project-diagram me-3"></i>{{ project.title }}</h1>
+            <p class="lead">{{ project.short_description }}</p>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <section class="row">
+            <div class="col-md-8">
+                <h2><i class="fas fa-info-circle me-2"></i>Project Description</h2>
+                <p>{{ project.description }}</p>
+
+                <h3><i class="fas fa-image me-2"></i>Image Processing Demo</h3>
+                <form id="image-upload-form" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="image-upload" class="form-label"><i class="fas fa-upload me-2"></i>Upload an image for processing</label>
+                        <input type="file" class="form-control" id="image-upload" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-cogs me-2"></i>Process Image</button>
+                </form>
+                <div id="image-preview" class="mt-3"></div>
+                <div id="processing-result" class="mt-3"></div>
+
+                <h3><i class="fas fa-images me-2"></i>Project Images</h3>
+                <div class="row" id="project-images-container">
+                    {% for image in project.images %}
+                        <div class="col-md-4 mb-3">
+                            <div class="project-image-container" data-full-image="{{ url_for('static', filename='images/' + image) }}">
+                                <img src="{{ url_for('static', filename='images/' + image) }}" class="project-image" alt="Project Image {{ loop.index }}">
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3 class="card-title"><i class="fas fa-clipboard-list me-2"></i>Project Details</h3>
+                        <p><i class="far fa-calendar-alt me-2"></i><strong>Date Completed:</strong> {{ project.completion_date }}</p>
+                        <p><i class="fab fa-github me-2"></i><strong>GitHub:</strong> <a href="{{ project.github_url }}" target="_blank">Repository</a></p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3 class="card-title"><i class="fas fa-share-alt me-2"></i>Share Project</h3>
+                        <div class="d-flex justify-content-around">
+                            <a href="#" class="btn btn-outline-primary btn-sm"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="btn btn-outline-info btn-sm"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="btn btn-outline-danger btn-sm"><i class="fab fa-pinterest-p"></i></a>
+                            <a href="#" class="btn btn-outline-secondary btn-sm"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="my-5">
+            <h2><i class="fas fa-sticky-note me-2"></i>Additional Notes</h2>
+            <p>{{ project.additional_notes }}</p>
+        </section>
+
+    </main>
+
+    <footer class="bg-light py-4">
+        <div class="container text-center">
+            <p><i class="far fa-copyright me-2"></i>{{ current_year }} Your Name. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Image processing demo
+        document.getElementById('image-upload-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('image-upload');
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // document.getElementById('image-preview').innerHTML = `<img src="${e.target.result}" class="img-fluid mb-3" alt="Uploaded Image">`;
+                    
+                    // Send the image to the API endpoint
+                    fetch('/api/process-image', {
+                        method: 'POST',
+                        body: JSON.stringify({image: e.target.result}),
+                        headers: {'Content-Type': 'application/json'}
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('processing-result').innerHTML = `
+                            <h4>Processed Result:</h4>
+                            <p>${data.result}</p>
+                            <img src="${data.processed_image}" class="img-fluid" alt="Processed Image">
+                        `;
+                    })
+                    .catch(error => console.error('Error:', error));
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

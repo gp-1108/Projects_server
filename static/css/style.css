@@ -1,0 +1,41 @@
+.project-image-container {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 0.25rem;
+    position: relative;
+}
+.project-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease-in-out;
+}
+.project-image-container:hover .project-image {
+    transform: scale(1.1);
+}
+.project-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+}
+.project-image-container:hover .project-image-overlay {
+    opacity: 1;
+}
+
+/* Optional: Add a subtle shadow and change cursor on hover */
+.project-image-container:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
