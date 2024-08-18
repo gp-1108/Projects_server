@@ -4,7 +4,7 @@ from api_funcs import seg_player
 
 app = Flask(__name__)
 
-@app.route("/project/player-segmentation")
+@app.route("/player-segmentation")
 def project():
     # Fetch project data based on project_id
     project_data = {
@@ -24,4 +24,9 @@ def process_image():
     return seg_player()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        ssl_context=("../cert.pem", "../key.pem"),
+        host="0.0.0.0",
+        port=5001,
+        debug=True
+    )
