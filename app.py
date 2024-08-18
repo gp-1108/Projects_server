@@ -25,7 +25,7 @@ def process_image():
 
 if __name__ == "__main__":
     app.run(
-        ssl_context=("../cert.pem", "../key.pem"),
+        ssl_context=("/certs/cert.pem", "/certs/key.pem"),
         host="0.0.0.0",
         port=5001,
         debug=True
