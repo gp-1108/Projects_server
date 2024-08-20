@@ -25,6 +25,17 @@ def seg_player():
     combined_img = cv2.cvtColor(combined_img, cv2.COLOR_BGR2RGB)
     combined_img = Image.fromarray(combined_img)
 
+    # Scaling the image to max of 500px
+    width, height = combined_img.size
+    max_size = 500
+    if width > height:
+        new_width = max_size
+        new_height = int(max_size * height / width)
+    else:
+        new_height = max_size
+        new_width = int(max_size * width / height)
+    combined_img = combined_img.resize((new_width, new_height))
+
 
     buffered = io.BytesIO()
     combined_img.save(buffered, format="PNG")
