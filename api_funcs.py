@@ -2,36 +2,32 @@ from flask import request, jsonify
 import base64
 import io
 from PIL import Image
-from ultralytics import YOLO
+from utils.yoloseg import YOLOSeg
+import cv2
+import numpy as np
 
 def seg_player():
     data = request.json
     image_data = data['image'].split(',')[1]  # Remove the "data:image/jpeg;base64," part
     image_bytes = base64.b64decode(image_data)
+
+    # Convert the byte data to a NumPy array
+    image_array = np.frombuffer(image_bytes, dtype=np.uint8)
+
+    # Decode the image from the array
+    img = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
     
-    # Process the image (this is a placeholder, replace with your actual processing logic)
-    img = Image.open(io.BytesIO(image_bytes))
+    # Initialize the YOLOSeg model
+    yolo_seg = YOLOSeg("models/best.onnx")
+    boxes, scores, class_ids, masks = yolo_seg(img)
+    combined_img = yolo_seg.draw_masks(img)
+    # Convert to RGB
+    combined_img = cv2.cvtColor(combined_img, cv2.COLOR_BGR2RGB)
+    combined_img = Image.fromarray(combined_img)
 
-    # Making it smaller for faster processing
-    W, H = img.size
-    max_size = 300
-    # Calculate the scaling factor
-    scaling_factor = min(max_size / W, max_size / H)
-    new_size = (int(W * scaling_factor), int(H * scaling_factor))
-    img = img.resize(new_size)
-    W, H = img.size
 
-    # Load the model and process the image
-    model = YOLO("./models/best.onnx", task="segment")
-    result = model(img)[0]
-    np_output = result.plot(
-        boxes=False,
-        color_mode="instance"
-    )
-    np_output = np_output[:, :, ::-1] # Convert BGR to RGB
-    processed_img = Image.fromarray(np_output.astype('uint8'))
     buffered = io.BytesIO()
-    processed_img.save(buffered, format="PNG")
+    combined_img.save(buffered, format="PNG")
     processed_image_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
     
     return jsonify({

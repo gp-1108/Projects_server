@@ -16,5 +16,8 @@ COPY . .
 # Step 6: Expose the port Flask will run on
 EXPOSE 5001
 
+# Step 7: Add some packages to run opencv
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6 -y
+
 # Step 8: Run the Flask app
 CMD ["python3", "app.py"]
