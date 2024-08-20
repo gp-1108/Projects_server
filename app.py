@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from datetime import datetime
-from api_funcs import seg_player
+from utils.api_funcs import seg_player
 
 app = Flask(__name__)
 
