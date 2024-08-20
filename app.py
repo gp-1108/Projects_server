@@ -5,7 +5,7 @@ from utils.api_funcs import seg_player
 app = Flask(__name__)
 
 @app.route("/player-segmentation")
-def project():
+def player_segmentation():
     # Fetch project data based on project_id
     project_data = {
         "title": "Player Segmentation",
