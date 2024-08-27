@@ -61,19 +61,21 @@ def simulate_snake_game():
     env = SnakeEnv(1, 7)
     hyb = HybridAgent(env.boards, "models/hybrid_model.onnx")
 
-    actions = []
+    states = []
+    body, head, fruit = env.get_pieces()
+    body, head, fruit = body[0], head[0], fruit[0]
+    states.append([body, head, fruit])
 
     for _ in range(num_actions):
         action = hyb.get_actions(env.boards)
-        actions.append(int(action[0][0]))
         env.move(action)
-
-    # Convert the board state to a list of lists
-    board = env.boards[0].astype(int).tolist()
-    board = [[int(cell) for cell in row] for row in board]
+        body, head, fruit = env.get_pieces()
+        body, head, fruit = body[0], head[0], fruit[0]
+        states.append([body, head, fruit])
 
     response = {
-        'board': board,
-        'actions': actions
+        "bodies": [state[0] for state in states],
+        "heads": [state[1] for state in states],
+        "fruits": [state[2] for state in states],
     }
     return jsonify(response)

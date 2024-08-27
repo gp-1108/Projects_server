@@ -159,3 +159,22 @@ class OriginalSnakeEnvironment(BaseEnvironment):
         ind = available[np.random.choice(range(len(available)))]
         board[ind[0], ind[1]] = self.HEAD
         return board
+
+    def get_pieces(self):
+        bodies = []
+        heads = []
+        fruits = []
+        for i, board in enumerate(self.boards):
+            bodies.append(np.argwhere(board == self.BODY))
+            heads.append(np.argwhere(board == self.HEAD))
+            fruits.append(np.argwhere(board == self.FRUIT))
+        # Removing extra dim
+        fruits = [f[0] for f in fruits]
+        heads = [h[0] for h in heads]
+        bodies = [body for body in bodies]
+
+        # Converting to tuples
+        fruits = [(int(f[0]), int(f[1])) for f in fruits]
+        heads = [(int(h[0]), int(h[1])) for h in heads]
+        bodies = [[(int(b[0]), int(b[1])) for b in body] for body in bodies]
+        return bodies, heads, fruits

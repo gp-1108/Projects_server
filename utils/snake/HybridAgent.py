@@ -72,6 +72,9 @@ class HybridAgent(BaselineAgent, DQNAgent):
             
             # Avoid wall collisions for DQN actions
             safe_actions = self.avoid_wall_collisions(boards[dqn_mask], dqn_actions)
+
+            # Avoid eating itself for DQN actions
+            safe_actions = self.avoid_eating_self(boards[dqn_mask], safe_actions)
             actions[dqn_mask] = safe_actions
 
         return actions
@@ -101,6 +104,38 @@ class HybridAgent(BaselineAgent, DQNAgent):
             (0 <= new_heads[:, 0]) & (new_heads[:, 0] < height) &
             (0 <= new_heads[:, 1]) & (new_heads[:, 1] < width) &
             (boards[np.arange(num_boards), new_heads[:, 0], new_heads[:, 1]] != self.WALL)
+        )
+
+        # Where moves are invalid, use BaselineAgent
+        invalid_mask = ~valid_moves
+        if np.any(invalid_mask):
+            actions[invalid_mask] = BaselineAgent.get_actions(self, boards[invalid_mask]).reshape(-1, 1)
+        
+        return actions
+    
+    def avoid_eating_self(self, boards, actions):
+        """
+        Avoids eating itself by checking if the new head positions after taking certain actions are not on the body.
+        This method is used to correct the actions taken by the DQN agent to avoid eating itself.
+
+        Parameters:
+        - boards (ndarray): Array of shape (num_boards, height, width) representing the game boards.
+        - actions (list): List of actions to be taken.
+        Returns:
+        - actions (ndarray): Array of actions after avoiding eating itself.
+        """
+        actions = np.array(actions)
+        num_boards, height, width = boards.shape
+        
+        # Find head positions
+        heads = np.array([np.unravel_index(np.argmax(b == self.HEAD), (height, width)) for b in boards])
+        
+        # Calculate new head positions based on actions
+        new_heads = heads + self.update_dirs[actions.flatten()]
+        
+        # Check if new head positions are not on the body
+        valid_moves = (
+            boards[np.arange(num_boards), new_heads[:, 0], new_heads[:, 1]] != self.BODY
         )
 
         # Where moves are invalid, use BaselineAgent

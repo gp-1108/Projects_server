@@ -16,9 +16,25 @@ def player_segmentation():
         "images": ["band_seg.jpg", "couple_seg.jpg"],
         "completion_date": "2023-08-10",
         "github_url": "https://github.com/gp-1108/CV_Sport_Project",
-        "paper": "https://github.com/gp-1108/CV_Sport_Project/blob/master/Report%20-%20Sport%20Scene%20Analysis.pdf"
+        "report": "https://github.com/gp-1108/CV_Sport_Project/blob/master/Report%20-%20Sport%20Scene%20Analysis.pdf"
     }
     return render_template("player_seg.html", project=project_data, current_year=datetime.now().year)
+
+@app.route("/snake-game")
+def snake_game():
+    project_data = {
+        "title": "Snake Game Simulation",
+        "short_description": "Simulating a snake game using Reinforcement Learning",
+        "description": "This project aims to simulate a snake game using Reinforcement Learning. The agent is trained using a hybrid approach, combining both DQN and Policy Gradient methods. The final model was able to achieve high scoring on the number of fruits, avoiding wall collisions.",
+        "technologies": ["Python", "TensorFlow", "Reinforcement Learning"],
+        "images": [],
+        "completion_date": "2024-08-10",
+        "github_url": "https://github.com/gp-1108/snake_rl.git",
+        "report": "https://github.com/gp-1108/snake_rl/blob/main/Report%20RL%20-%20Snake.pdf"
+    }
+
+    return render_template("snake_game.html", project=project_data, current_year=datetime.now().year)
+
 
 @app.route('/api/process-image', methods=['POST'])
 def process_image():
