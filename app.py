@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from datetime import datetime
-from utils.api_funcs import seg_player
+from utils.api_funcs import seg_player, simulate_snake_game
+from utils.logger import logger
 
 app = Flask(__name__)
 
@@ -21,12 +22,30 @@ def player_segmentation():
 
 @app.route('/api/process-image', methods=['POST'])
 def process_image():
-    return seg_player()
+    try:
+        return seg_player()
+    except Exception as e:
+        return jsonify({
+            'error': f'An error occurred: {str(e)}'
+        })
+
+@app.route("/api/simulate-snake-game", methods=['GET'])
+def snake():
+    try:
+        return simulate_snake_game()
+    except Exception as e:
+        return jsonify({
+            'error': f'An error occurred: {str(e)}'
+        })
 
 if __name__ == "__main__":
-    app.run(
-        ssl_context=("/certs/cert.pem", "/certs/key.pem"),
-        host="0.0.0.0",
-        port=5001,
-        debug=False
-    )
+    logger.info("Starting the app...")
+    try:
+        app.run(
+            ssl_context=("/certs/cert.pem", "/certs/key.pem"),
+            host="0.0.0.0",
+            port=5001,
+            debug=True
+        )
+    except Exception as e:
+        logger.exception(f"An error occurred: {str(e)}")

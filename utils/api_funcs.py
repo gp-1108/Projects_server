@@ -5,7 +5,10 @@ from PIL import Image
 from utils.yoloseg import YOLOSeg
 import cv2
 import numpy as np
+from utils.snake import SnakeEnv, HybridAgent
+from utils.logger import log_function
 
+@log_function
 def seg_player():
     data = request.json
     image_data = data['image'].split(',')[1]  # Remove the "data:image/jpeg;base64," part
@@ -45,3 +48,32 @@ def seg_player():
         'result': 'Image processed successfully',
         'processed_image': f'data:image/png;base64,{processed_image_base64}'
     })
+
+@log_function
+def simulate_snake_game():
+    # Get the number of actions from query parameters
+    num_actions = int(request.args.get('num_actions', 10))
+
+    if not (0 < num_actions <= 100):
+        num_actions = 10
+
+    # Create the environment
+    env = SnakeEnv(1, 7)
+    hyb = HybridAgent(env.boards, "models/hybrid_model.onnx")
+
+    actions = []
+
+    for _ in range(num_actions):
+        action = hyb.get_actions(env.boards)
+        actions.append(int(action[0][0]))
+        env.move(action)
+
+    # Convert the board state to a list of lists
+    board = env.boards[0].astype(int).tolist()
+    board = [[int(cell) for cell in row] for row in board]
+
+    response = {
+        'board': board,
+        'actions': actions
+    }
+    return jsonify(response)
