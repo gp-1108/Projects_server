@@ -28,5 +28,5 @@ if __name__ == "__main__":
         ssl_context=("/certs/cert.pem", "/certs/key.pem"),
         host="0.0.0.0",
         port=5001,
-        debug=True
+        debug=False
     )
