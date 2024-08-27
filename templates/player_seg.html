@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ project.title }} - My Portfolio</title>
@@ -41,7 +42,7 @@
                 <div id="image-preview" class="mt-3"></div>
                 <div id="processing-result" class="mt-3"></div>
 
-                <h3><i class="fas fa-images me-2"></i>Demo Images</h3>
+                <h3><i class="fas fa-images me-2 mt-2"></i>Demo Images</h3>
                 <div class="row" id="project-images-container">
                     {% for image in project.images %}
                         <div class="col-md-4 mb-3">

@@ -25,9 +25,9 @@ def snake_game():
     project_data = {
         "title": "Snake Game Simulation",
         "short_description": "Simulating a snake game using Reinforcement Learning",
-        "description": "This project aims to simulate a snake game using Reinforcement Learning. The agent is trained using a hybrid approach, combining both DQN and Policy Gradient methods. The final model was able to achieve high scoring on the number of fruits, avoiding wall collisions.",
+        "description": "This project aims to simulate a snake game using Reinforcement Learning. The agent is trained using a hybrid approach, combining both DQN and Policy Gradient methods. The final model was able to achieve high scoring on the number of fruits, avoiding wall collisions. Please be advised that the agent that you will see here is a slightly modified version of the final one because the ultimate goal was to collect as many fruits as possible and it lead to some interesting policies. Read the report for more information.",
         "technologies": ["Python", "TensorFlow", "Reinforcement Learning"],
-        "images": [],
+        "images": ["evaluation.png", "training.png"],
         "completion_date": "2024-08-10",
         "github_url": "https://github.com/gp-1108/snake_rl.git",
         "report": "https://github.com/gp-1108/snake_rl/blob/main/Report%20RL%20-%20Snake.pdf"
